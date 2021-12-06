@@ -1,3 +1,3 @@
-sklearn~=0.0
-joblib~=1.1.0
+sklearn
+joblib
 numpy
