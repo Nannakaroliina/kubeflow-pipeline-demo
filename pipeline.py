@@ -6,7 +6,7 @@ def preprocess_op():
 
     return dsl.ContainerOp(
         name='Preprocess Data',
-        image='Nannakaroliina/kubeflow_pipeline_demo_preprocessing:latest',
+        image='nannakaroliina/kubeflow_pipeline_demo_preprocessing:latest',
         arguments=[],
         file_outputs={
             'x_train': '/app/x_train.npy',
@@ -21,7 +21,7 @@ def train_op(x_train, y_train):
 
     return dsl.ContainerOp(
         name='Train Model',
-        image='Nannakaroliina/kubeflow_pipeline_demo_train:latest',
+        image='nannakaroliina/kubeflow_pipeline_demo_train:latest',
         arguments=[
             '--x_train', x_train,
             '--y_train', y_train
@@ -36,7 +36,7 @@ def predict_op(x_test, y_test, model):
 
     return dsl.ContainerOp(
         name='Test Model',
-        image='Nannakaroliina/kubeflow_pipeline_demo_predict:latest',
+        image='nannakaroliina/kubeflow_pipeline_demo_predict:latest',
         arguments=[
             '--x_test', x_test,
             '--y_test', y_test,

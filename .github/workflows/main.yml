@@ -13,14 +13,14 @@ jobs:
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
       - name: Build the Preprocess image
-        run: docker build ./preprocess_data --tag Nannakaroliina/kubeflow_pipeline_demo_preprocessing
+        run: docker build ./preprocess_data --tag nannakaroliina/kubeflow_pipeline_demo_preprocessing
       - name: Push the Preprocess image
-        run: docker push Nannakaroliina/kubeflow_pipeline_demo_preprocessing
+        run: docker push nannakaroliina/kubeflow_pipeline_demo_preprocessing
       - name: Build the Train image
-        run: docker build ./train_model --tag Nannakaroliina/kubeflow_pipeline_demo_train
+        run: docker build ./train_model --tag nannakaroliina/kubeflow_pipeline_demo_train
       - name: Push the Train image
-        run: docker push Nannakaroliina/kubeflow_pipeline_demo_train
+        run: docker push nannakaroliina/kubeflow_pipeline_demo_train
       - name: Build the Predict image
-        run: docker build ./predict --tag Nannakaroliina/kubeflow_pipeline_demo_predict
+        run: docker build ./predict --tag nannakaroliina/kubeflow_pipeline_demo_predict
       - name: Push the Predict image
-        run: docker push Nannakaroliina/kubeflow_pipeline_demo_predict
+        run: docker push nannakaroliina/kubeflow_pipeline_demo_predict
