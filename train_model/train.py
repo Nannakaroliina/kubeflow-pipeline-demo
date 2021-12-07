@@ -10,6 +10,7 @@ def _train_model(x_train, y_train):
     x_train_ = np.load(x_train)
     y_train_ = np.load(y_train)
 
+    # TODO should be able to define the model name in case of multiple models
     model_name = "model.plk"
 
     param_grid = {'C': [0.1, 1, 10, 100], 'gamma': [1, 0.1, 0.01, 0.001], 'kernel': ['rbf']}

@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 
 
 def _preprocess_data():
+    # TODO Should be able to use different datasets, shouldn't be hardcoded one
     cancer = load_breast_cancer()
     df = pd.DataFrame(np.c_[cancer['data'], cancer['target']], columns=np.append(cancer['feature_names'], ['target']))
 

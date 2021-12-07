@@ -1,9 +1,11 @@
 import kfp
-from kfp.v2 import dsl
+from kfp import dsl
 
+
+# Build ContainerOps of Docker images with needed arguments for data/model access and file_output definitions.
+# TODO Fix the FutureWarning regarding ContainerOp
 
 def preprocess_op():
-
     return dsl.ContainerOp(
         name='Preprocess Data',
         image='nannakaroliina/kubeflow_pipeline_demo_preprocessing:latest',
@@ -18,7 +20,6 @@ def preprocess_op():
 
 
 def train_op(x_train, y_train):
-
     return dsl.ContainerOp(
         name='Train Model',
         image='nannakaroliina/kubeflow_pipeline_demo_train:latest',
@@ -27,13 +28,12 @@ def train_op(x_train, y_train):
             '--y_train', y_train
         ],
         file_outputs={
-            'model': '/app/model.pkl'
+            'model': '/app/model.plk'
         }
     )
 
 
 def predict_op(x_test, y_test, model):
-
     return dsl.ContainerOp(
         name='Test Model',
         image='nannakaroliina/kubeflow_pipeline_demo_predict:latest',
@@ -43,7 +43,7 @@ def predict_op(x_test, y_test, model):
             '--model', model
         ],
         file_outputs={
-            'mean_squared_error': '/app/output.txt'
+            'f1_score': '/app/results.txt'
         }
     )
 
@@ -67,5 +67,7 @@ def kubeflow_demo_pipeline():
     ).after(_train_op)
 
 
-client = kfp.Client(host="http://127.0.0.1:8080/pipeline")
-client.create_run_from_pipeline_func(kubeflow_demo_pipeline, arguments={})
+if __name__ == '__main__':
+    # Build a pipeline yaml file to be uploaded to Kubeflow Pipeline UI
+    # TODO implement local run option without manual pipeline creation
+    kfp.compiler.Compiler().compile(kubeflow_demo_pipeline, 'pipeline.yaml')
