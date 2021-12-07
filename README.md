@@ -20,6 +20,10 @@ the _pipeline.yaml_ file is compiled based on the _pipeline.py_ code.
 
 ![alt text](photos/kubeflow-pipline.png "Kubeflow pipeline components")
 
+### Code modifications
+
+In case of code modifications to _pipeline.py_, run the code to generate new _pipeline.yaml_.
+If modifying the components, remember to push changes to Github to get newest version for the Docker images.
 
 ##Requirements
 
