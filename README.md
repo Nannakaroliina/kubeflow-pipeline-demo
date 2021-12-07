@@ -25,17 +25,17 @@ the _pipeline.yaml_ file is compiled based on the _pipeline.py_ code.
 In case of code modifications to _pipeline.py_, run the code to generate new _pipeline.yaml_.
 If modifying the components, remember to push changes to Github to get newest version for the Docker images.
 
-##Requirements
+## Requirements
 
 * Kubernetes
 * Kubeflow (kind, K3s, K3ai)
 
-##Installation steps for local Kubeflow Pipelines
+## Installation steps for local Kubeflow Pipelines
 There is three options: kind, K3s or K3ai. 
 Following steps are for K3s, so for other options please visit: 
 [Kubeflow Documentation, Local Deployment](https://www.kubeflow.org/docs/components/pipelines/installation/localcluster-deployment/)
 
-###K3s
+### K3s
 
 Install K3s:
 ```shell
@@ -52,7 +52,7 @@ Check the cluster exists:
 sudo k3s kubectl get node
 ```
 
-###Deploying Kubeflow Pipelines
+### Deploying Kubeflow Pipelines
 Following installation works for all environments (kind, K3s, K3ai).
 
 Deploy the Kubeflow Pipelines
@@ -79,7 +79,7 @@ Now you can access the UI at [http:/localhost:8080/](http://localhost:8080/).
 In any case of issues check installation guide above or ask for further assistance.
 
 
-###Using the Kubeflow Pipelines UI
+### Using the Kubeflow Pipelines UI
 
 After opening the UI _(see below)_, click the _+ Upload pipeline_ to create new pipeline.
 
