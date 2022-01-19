@@ -48,7 +48,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.8+k8s1 sh -
 ```
 #### NOTE
 The version after 1.21 does not support for some APIs of K3s in kubeflow. 
-More information at [https://stackoverflow.com/questions/70420241/issues-when-setting-up-kubeflow-pipeline-on-minikube/70450847](link)
+More information at [link](https://stackoverflow.com/questions/70420241/issues-when-setting-up-kubeflow-pipeline-on-minikube/70450847)
 
 
 ### Create a cluster:
