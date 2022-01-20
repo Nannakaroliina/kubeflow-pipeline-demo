@@ -44,7 +44,7 @@ sh /usr/local/bin/k3s-uninstall.sh
 
 ### Install K3s:
 ```shell
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.8+k8s1 sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.8+k3s1 sh -
 ```
 #### NOTE
 The version after 1.21 does not support for some APIs of K3s in kubeflow. 
