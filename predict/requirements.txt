@@ -1,3 +1,6 @@
 joblib
 numpy
 sklearn
+mlflow
+pysftp
+psycopg2-binary

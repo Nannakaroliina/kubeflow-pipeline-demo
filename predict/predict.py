@@ -2,13 +2,19 @@ import joblib
 import numpy as np
 from sklearn.metrics import f1_score
 import argparse
+import mlflow
 
 
 def predict(x_test, y_test, model):
     x_test_ = np.load(x_test)
     y_test_ = np.load(y_test)
 
-    model = joblib.load(model)
+    # model = joblib.load(model)
+    model_name = "sklearn-grid-search-cv-model"
+    model_version = 1
+    model = mlflow.sklearn.load_model(
+        model_uri=f"models:/{model_name}/{model_version}"
+    )
 
     y_pred = model.predict(x_test_)
 
@@ -19,6 +25,9 @@ def predict(x_test, y_test, model):
 
 
 if __name__ == '__main__':
+    mlflow.set_tracking_uri("postgresql://mlflow_user:mlflow@localhost/mlflow_db")
+    mlflow.set_experiment("predict")
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--x_test')
     parser.add_argument('--y_test')

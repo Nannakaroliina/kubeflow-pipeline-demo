@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: kubeflow-pipeline-demo-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2021-12-07T10:04:36.640651',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-03-25T12:28:24.115919',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Kubeflow pipeline demo
       with simple model training", "name": "Kubeflow pipeline demo"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
