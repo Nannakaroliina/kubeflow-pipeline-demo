@@ -18,17 +18,25 @@ Images are pulled from Docker for each component. For each op the needed _argume
 _file_outputs_ are defined on _pipeline.py_. Pipeline flow is defined in _kubeflow_demo_pipeline_ and 
 the _pipeline.yaml_ file is compiled based on the _pipeline.py_ code.
 
+MLflow integration to the pipeline adds the functionality for model saving to desired backend storage,
+in this case PostgreSQL, model versioning, logging of metrics etc. See more at: [MLflow documentation](https://mlflow.org/docs/latest/index.html)
+
+
 ![alt text](photos/kubeflow-pipline.png "Kubeflow pipeline components")
 
 ### Code modifications
 
 In case of code modifications to _pipeline.py_, run the code to generate new _pipeline.yaml_.
 If modifying the components, remember to push changes to Github to get newest version for the Docker images.
+While using new branches for new implementations, the docker images are not built so this requires bit of manual
+work unless the code is merged to main. I haven't added action workflow for building docker images for branches.
 
 ## Requirements
 
 * Kubernetes
 * Kubeflow (kind, K3s, K3ai)
+* MLflow (local unless server available)
+* PostgreSQL
 
 ## Installation steps for local Kubeflow Pipelines
 There is three options: kind, K3s or K3ai. 
@@ -105,3 +113,51 @@ Run details contains everything needed for basic run, click _Start_.
 
 Finally the run view will open and the pipeline is running. 
 After run the results will be available on the side panel.
+
+## Setting up the local MLflow
+
+For the backend storage, one desired database needs to be available. 
+In this demo, PostgreSQL is chosen database and it can be replaces as you desire.
+
+### Setup the PostgreSQL
+
+If you don't have postgres installed, install it before next step. Find the correct version from
+[PostgreSQL downloads](https://www.postgresql.org/download/)
+
+Start postgres:
+```shell
+sudo -u postgres psql
+```
+
+Create database for MLflow with user and password _(if you change the name of db, user or password
+remember to modify them in next command as well)_:
+```postgresql
+CREATE DATABASE mlflow_db;
+CREATE USER mlflow_user WITH ENCRYPTED PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE mlflow_db TO mlflow_user;
+```
+
+PostgreSQL needs psycopg2 library _(included in requirements)_ for Python to interact with it. To ensure correct installation make sure you have GCC Linux installed:
+```shell
+sudo apt install gcc
+```
+
+Since PostgreSQL is meant for metadata storing, we need local folders for runs and logs:
+```shell
+mkdir ~/mlflow/mlruns
+mkdir ~/mlflow/mllogs
+```
+
+### Start the local MLflow Tracking service
+To run the MLflow locally, use following command:
+```shell
+mlflow server \
+  --backend-store-uri postgresql://mlflow_user:password@localhost/mlflow_db \
+  --default-artifact-root sftp://mlflow_user@<hostname_of_server>:~/mlflow/mlruns \
+  -h 0.0.0.0 \
+  -p 8000
+```
+
+For setting up the remote server for MLflow, you can find more information from [MLflow documentation](https://mlflow.org/docs/latest/tracking.html#mlflow-tracking-servers) and
+there is articles available as well by other developers.
+
