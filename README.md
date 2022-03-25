@@ -142,7 +142,7 @@ PostgreSQL needs psycopg2 library _(included in requirements)_ for Python to int
 sudo apt install gcc
 ```
 
-Since PostgreSQL is meant for metadata storing, we need local folders for runs and logs:
+Since PostgreSQL is meant for metadata storing, we need local folders for artifacts:
 ```shell
 mkdir ~/mlflow/mlruns
 mkdir ~/mlflow/mllogs
@@ -160,4 +160,11 @@ mlflow server \
 
 For setting up the remote server for MLflow, you can find more information from [MLflow documentation](https://mlflow.org/docs/latest/tracking.html#mlflow-tracking-servers) and
 there is articles available as well by other developers.
+
+### Access the MLflow UI
+
+The local MLflow UI can be accessed through [http:/localhost:8000/](http://localhost:8000/)
+_(accuracy used in metrics and params to just show information that can be stored)_
+
+![alt text](photos/mlflow.png "MLflow UI")
 
