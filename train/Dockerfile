@@ -14,7 +14,7 @@ RUN conda --version
 
 COPY . /app
 WORKDIR /app
-
+    
 RUN git clone https://github.com/deephealthproject/eddl
 
 RUN conda update conda && \
@@ -47,4 +47,11 @@ RUN cmake . && \
     make
 
 # run compiled file
-CMD ./predict > log_p.txt
+CMD ./train > log_t.txt
+
+# /root/miniconda3/pkgs/libprotobuf-3.11.4-h8b12597_0/lib/libprotobuf.so.22.0.4
+# /root/miniconda3/pkgs/libprotobuf-3.11.4-h8b12597_0/lib/libprotobuf.so.22
+# /root/miniconda3/pkgs/libprotobuf-3.11.4-h8b12597_0/lib/libprotobuf.so
+# /root/miniconda3/envs/eddl/lib/libprotobuf.so.22.0.4
+# /root/miniconda3/envs/eddl/lib/libprotobuf.so.22
+# /root/miniconda3/envs/eddl/lib/libprotobuf.so
