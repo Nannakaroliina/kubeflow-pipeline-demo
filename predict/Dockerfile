@@ -15,9 +15,8 @@ RUN conda --version
 COPY . /app
 WORKDIR /app
 
-RUN git clone https://github.com/deephealthproject/eddl
-
-RUN conda update conda && \
+RUN git clone https://github.com/deephealthproject/eddl && \
+    conda update conda && \
     conda env create -f eddl/environment.yml
 
 SHELL [ "conda", "run", "-n", "eddl", "/bin/bash", "-c"]
@@ -32,9 +31,7 @@ RUN cd eddl/build && \
     -DBUILD_SHARED_LIBS=ON \
     -DBUILD_TARGET=CPU \
     -DBUILD_HPC=OFF -DBUILD_TESTS=OFF \
-    -DBUILD_DIST=OFF -DBUILD_RUNTIME=OFF
-
-RUN cd eddl/build && \
+    -DBUILD_DIST=OFF -DBUILD_RUNTIME=OFF && \
     make -j$(nproc) && \
     make install
 
