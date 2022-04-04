@@ -5,7 +5,7 @@ from kfp import dsl
 def train_op():
     return dsl.ContainerOp(
         name='Train Model',
-        image='hmnguyen/train:latest',
+        image='nannakaroliina/eddltrain:latest',
         file_outputs={
             'x_train': 'app/cifar_trX.bin',
             'y_train': 'app/cifra_trY.bin',
@@ -20,7 +20,7 @@ def train_op():
 def predict_op(x_test, y_test, model):
     return dsl.ContainerOp(
         name='Test Model',
-        image='hmnguyen/predict:latest',
+        image='nannakaroliina/eddlpredict:latest',
         arguments=[
             '--x_test', x_test,
             '--y_test', y_test,

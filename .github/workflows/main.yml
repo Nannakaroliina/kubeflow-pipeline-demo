@@ -13,10 +13,10 @@ jobs:
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
       - name: Build EDDL Train
-        run: docker build ./train -t tuminguyen/train
+        run: docker build ./train -t nannakaroliina/eddltrain
       - name: Push EDDL Train
-        run: docker push tuminguyen/train
+        run: docker push nannakaroliina/eddltrain
       - name: Build EDDL Predict
-        run: docker build ./predict -t tuminguyen/predict
+        run: docker build ./predict -t nannakaroliina/eddlpredict
       - name: Push EDDL Predict
-        run: docker push tuminguyen/predict
+        run: docker push nannakaroliina/eddlpredict
