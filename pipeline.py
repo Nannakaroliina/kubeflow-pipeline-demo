@@ -17,14 +17,14 @@ def train_op():
     )
 
     
-def predict_op(x_test, y_test, model):
+def predict_op(model, x_test, y_test):
     return dsl.ContainerOp(
         name='Test Model',
         image='nannakaroliina/eddlpredict:latest',
         arguments=[
-            '--x_test', x_test,
-            '--y_test', y_test,
-            '--model', model
+            model,
+            x_test,
+            y_test
         ]
     )
 
@@ -38,9 +38,9 @@ def kubeflow_eddl_pipeline():
     _train_op = train_op()
 
     _test_op = predict_op(
+        dsl.InputArgumentPath(_train_op.outputs['model']),
         dsl.InputArgumentPath(_train_op.outputs['x_test']),
-        dsl.InputArgumentPath(_train_op.outputs['y_test']),
-        dsl.InputArgumentPath(_train_op.outputs['model'])
+        dsl.InputArgumentPath(_train_op.outputs['y_test'])
     ).after(_train_op)
 
 
