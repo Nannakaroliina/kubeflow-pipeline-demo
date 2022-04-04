@@ -38,19 +38,17 @@ int main(int argc, char* argv[]){
           sgd(lr, 0.9), // Optimizer
           {"soft_cross_entropy"}, // Losses
           {"categorical_accuracy"}, // Metrics
-        //   CS_GPU({1}) // one GPU
-          //CS_GPU({1,1},100) // two GPU with weight sync every 100 batches
           CS_CPU()
     );
     cout << "----------------------------"<< endl;
 
     cout << "[INFO] Load model weights"<< endl;
-    load(net, "simple_CNN.bin");
+    load(net, argv[1]);
     cout << "----------------------------"<< endl;
 
     // Load and preprocess training data
-    Tensor* x_test = Tensor::load("cifar_tsX.bin");
-    Tensor* y_test = Tensor::load("cifar_tsY.bin");
+    Tensor* x_test = Tensor::load(argv[2]);
+    Tensor* y_test = Tensor::load(argv[3]);
     x_test->div_(255.0f);
 
     cout << "[INFO] Predict"<< endl;
@@ -62,12 +60,10 @@ int main(int argc, char* argv[]){
     cout << "----------------------------"<< endl;
 
     cout << "[INFO] SHOW Y_PRED" << endl;
-    // freopen( "log_p.txt", "w", stdout);
     for (int i = 0; i < y_pred.size(); i++) {
         y_pred[i]->print();
     }
     cout << "----------------------------" << endl;
-    // evaluate(net, {x_test}, {y_test}, batch_size);
 
     return 0;
 }
