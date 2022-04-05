@@ -23,4 +23,4 @@ RUN conda --version && \
     
 SHELL [ "conda", "run", "-n", "pyeddlkube", "/bin/bash", "-c"]
 
-CMD python predict.py > predict.log
+ENTRYPOINT [ "python", "predict.py"]
