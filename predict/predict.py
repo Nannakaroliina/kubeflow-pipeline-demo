@@ -40,11 +40,10 @@ def main(model, x, y):
     print("----------------------------")  
 
     print("[INFO] Y_PRED") 
-    print(type(y_pred))
+    print(y_pred[0].getdata())
     print("----------------------------")  
 
     print("[INFO] GROUND TRUTH / LABELS") 
-    print(type(y_test)) 
     print(y_test.getdata())
     print("----------------------------")  
 
@@ -55,4 +54,4 @@ if __name__ == "__main__":
     parser.add_argument('--x')
     parser.add_argument('--y')
     args = parser.parse_args()
-    main(model, x, y)
+    main(args.model, args.x, args.y)
