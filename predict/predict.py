@@ -1,27 +1,58 @@
-import joblib
-import numpy as np
-from sklearn.metrics import f1_score
+import pyeddl.eddl as eddl
+from pyeddl.tensor import Tensor
 import argparse
 
+def main(model, x, y):
+    print("[INFO] Model init")
+    batch_size = 100
+    num_classes = 10
+    in_ = eddl.Input([784])
+    layer = in_
+    layer = eddl.LeakyReLu(eddl.Dense(layer, 64))
+    layer = eddl.LeakyReLu(eddl.Dense(layer, 128))
+    layer = eddl.LeakyReLu(eddl.Dense(layer, 256))
+    layer = eddl.LeakyReLu(eddl.Dense(layer, 512))
+    layer = eddl.LeakyReLu(eddl.Dense(layer, 1024))
+    out = eddl.Softmax(eddl.Dense(layer, num_classes))
+    net = eddl.Model([in_], [out])
 
-def predict(x_test, y_test, model):
-    x_test_ = np.load(x_test)
-    y_test_ = np.load(y_test)
+    eddl.build(
+        net,
+        eddl.rmsprop(0.01),
+        ["soft_cross_entropy"],
+        ["categorical_accuracy"],
+        eddl.CS_CPU()
+    )
+    print("----------------------------") 
 
-    model = joblib.load(model)
+    x_test = Tensor.load(x)
+    y_test = Tensor.load(y)
+    x_test.div_(255.0)
 
-    y_pred = model.predict(x_test_)
+    # load model weights eddl.load(model_weights)
+    print("[INFO] LOAD MODEL")  
+    eddl.load(net, model)
+    print("----------------------------")  
 
-    score = f1_score(y_test_, y_pred, average='micro')
+    # predict to x[test]
+    print("[INFO] PREDICT") 
+    y_pred = eddl.predict(net, [x_test])
+    print("----------------------------")  
 
-    with open('results.txt', 'w') as result:
-        result.write(f'Score: {score}  \n\n Prediciton: {y_pred} | Actual {y_test_}')
+    print("[INFO] Y_PRED") 
+    print(type(y_pred))
+    print("----------------------------")  
+
+    print("[INFO] GROUND TRUTH / LABELS") 
+    print(type(y_test)) 
+    print(y_test.getdata())
+    print("----------------------------")  
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--x_test')
-    parser.add_argument('--y_test')
     parser.add_argument('--model')
+    parser.add_argument('--x')
+    parser.add_argument('--y')
     args = parser.parse_args()
-    predict(args.x_test, args.y_test, args.model)
+    main(model, x, y)

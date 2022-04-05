@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 WORKDIR /app
 
-COPY predict.py ./predict.py
+COPY train.py ./train.py
 COPY install.yml ./install.yml
 
 RUN apt-get update && \
@@ -23,4 +23,4 @@ RUN conda --version && \
     
 SHELL [ "conda", "run", "-n", "pyeddlkube", "/bin/bash", "-c"]
 
-CMD python predict.py > predict.log
+CMD python train.py > train.log
