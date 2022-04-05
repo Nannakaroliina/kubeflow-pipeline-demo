@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: kubeflow-pipeline-for-eddl-demo-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.11, pipelines.kubeflow.org/pipeline_compilation_time: '2022-04-04T18:03:29.113047',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.11, pipelines.kubeflow.org/pipeline_compilation_time: '2022-04-05T16:32:41.208949',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Kubeflow pipeline demo
       with simple EDDL model training", "name": "Kubeflow pipeline for EDDL demo"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.11}
@@ -44,7 +44,7 @@ spec:
       - {name: train-model-x_test, path: app/cifar_tsX.bin}
       - {name: train-model-x_train, path: app/cifar_trX.bin}
       - {name: train-model-y_test, path: app/cifar_tsY.bin}
-      - {name: train-model-y_train, path: app/cifra_trY.bin}
+      - {name: train-model-y_train, path: app/cifar_trY.bin}
     metadata:
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.11

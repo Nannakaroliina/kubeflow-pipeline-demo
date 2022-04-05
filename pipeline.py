@@ -8,7 +8,7 @@ def train_op():
         image='nannakaroliina/eddltrain:latest',
         file_outputs={
             'x_train': 'app/cifar_trX.bin',
-            'y_train': 'app/cifra_trY.bin',
+            'y_train': 'app/cifar_trY.bin',
             'x_test': 'app/cifar_tsX.bin',
             'y_test': 'app/cifar_tsY.bin',
             'architecture': 'app/model.pdf',
