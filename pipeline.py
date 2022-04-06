@@ -8,7 +8,7 @@ from kfp import dsl
 def preprocess_op():
     return dsl.ContainerOp(
         name='Preprocess Data',
-        image='nannakaroliina/kubeflow_pipeline_demo_preprocessing:latest',
+        image='nannakaroliina/kubeflow_pipeline_mlflow_preprocessing:latest',
         arguments=[],
         file_outputs={
             'x_train': '/app/x_train.npy',
@@ -22,7 +22,7 @@ def preprocess_op():
 def train_op(x_train, y_train):
     return dsl.ContainerOp(
         name='Train Model',
-        image='nannakaroliina/kubeflow_pipeline_demo_train:latest',
+        image='nannakaroliina/kubeflow_pipeline_mlflow_train:latest',
         arguments=[
             '--x_train', x_train,
             '--y_train', y_train
@@ -36,7 +36,7 @@ def train_op(x_train, y_train):
 def predict_op(x_test, y_test, model):
     return dsl.ContainerOp(
         name='Test Model',
-        image='nannakaroliina/kubeflow_pipeline_demo_predict:latest',
+        image='nannakaroliina/kubeflow_pipeline_mlflow_predict:latest',
         arguments=[
             '--x_test', x_test,
             '--y_test', y_test,
@@ -49,10 +49,10 @@ def predict_op(x_test, y_test, model):
 
 
 @dsl.pipeline(
-    name='Kubeflow pipeline demo',
-    description='Kubeflow pipeline demo with simple model training'
+    name='Kubeflow pipeline and mlflow demo',
+    description='Kubeflow pipeline and mlflow demo with simple model training'
 )
-def kubeflow_demo_pipeline():
+def kubeflow_mlflow_pipeline():
     _preprocess_op = preprocess_op()
 
     _train_op = train_op(
@@ -70,4 +70,4 @@ def kubeflow_demo_pipeline():
 if __name__ == '__main__':
     # Build a pipeline yaml file to be uploaded to Kubeflow Pipeline UI
     # TODO implement local run option without manual pipeline creation
-    kfp.compiler.Compiler().compile(kubeflow_demo_pipeline, 'pipeline.yaml')
+    kfp.compiler.Compiler().compile(kubeflow_mlflow_pipeline, 'pipeline.yaml')

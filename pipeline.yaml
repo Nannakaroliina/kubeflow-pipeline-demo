@@ -1,15 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: kubeflow-pipeline-demo-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-03-25T12:28:24.115919',
-    pipelines.kubeflow.org/pipeline_spec: '{"description": "Kubeflow pipeline demo
-      with simple model training", "name": "Kubeflow pipeline demo"}'}
+  generateName: kubeflow-pipeline-and-mlflow-demo-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-04-06T14:07:12.113041',
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "Kubeflow pipeline and
+      mlflow demo with simple model training", "name": "Kubeflow pipeline and mlflow
+      demo"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
 spec:
-  entrypoint: kubeflow-pipeline-demo
+  entrypoint: kubeflow-pipeline-and-mlflow-demo
   templates:
-  - name: kubeflow-pipeline-demo
+  - name: kubeflow-pipeline-and-mlflow-demo
     dag:
       tasks:
       - {name: preprocess-data, template: preprocess-data}
@@ -31,7 +32,7 @@ spec:
   - name: preprocess-data
     container:
       args: []
-      image: nannakaroliina/kubeflow_pipeline_demo_preprocessing:latest
+      image: nannakaroliina/kubeflow_pipeline_mlflow_preprocessing:latest
     outputs:
       artifacts:
       - {name: preprocess-data-x_test, path: /app/x_test.npy}
@@ -47,7 +48,7 @@ spec:
     container:
       args: [--x_test, /tmp/inputs/input-0/data, --y_test, /tmp/inputs/input-1/data,
         --model, /tmp/inputs/input-2/data]
-      image: nannakaroliina/kubeflow_pipeline_demo_predict:latest
+      image: nannakaroliina/kubeflow_pipeline_mlflow_predict:latest
     inputs:
       artifacts:
       - {name: preprocess-data-x_test, path: /tmp/inputs/input-0/data}
@@ -64,7 +65,7 @@ spec:
   - name: train-model
     container:
       args: [--x_train, /tmp/inputs/input-0/data, --y_train, /tmp/inputs/input-1/data]
-      image: nannakaroliina/kubeflow_pipeline_demo_train:latest
+      image: nannakaroliina/kubeflow_pipeline_mlflow_train:latest
     inputs:
       artifacts:
       - {name: preprocess-data-x_train, path: /tmp/inputs/input-0/data}
