@@ -1,16 +1,6 @@
 import pyeddl.eddl as eddl
 from pyeddl.tensor import Tensor
 import argparse
-import tarfile
-
-def extract(tar_url, extract_path='.'):
-    tar = tarfile.open(tar_url, 'r')
-    for item in tar:
-        tar.extract(item, extract_path)
-        if item.name.find(".tgz") != -1:
-            extract(item.name, "./" + item.name[:item.name.rfind('/')])
-    return tar.getnames()[0]
-
 
 def main(model, x, y):
     print("[INFO] Model init")
@@ -35,16 +25,13 @@ def main(model, x, y):
     )
     print("----------------------------") 
 
-    file_x = extract(x)
-    x_test = Tensor.load(file_x)
-    file_y = extract(y)
-    y_test = Tensor.load(file_y)
+    x_test = Tensor.load(x)
+    y_test = Tensor.load(y)
     x_test.div_(255.0)
 
     # load model weights eddl.load(model_weights)
     print("[INFO] LOAD MODEL") 
-    file_model = extract(model)
-    eddl.load(net, file_model)
+    eddl.load(net, model)
     print("----------------------------")  
 
     # predict to x[test]

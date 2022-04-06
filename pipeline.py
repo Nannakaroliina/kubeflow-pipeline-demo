@@ -7,10 +7,10 @@ def train_op():
         name='Train Model',
         image='nannakaroliina/pyeddltrain:latest',
         file_outputs={
-            'x_train': 'app/mnist_trX.bin',
-            'y_train': 'app/mnist_trY.bin',
-            'x_test': 'app/mnist_tsX.bin',
-            'y_test': 'app/mnist_tsY.bin',
+            'x_train': '/app/mnist_trX.bin',
+            'y_train': '/app/mnist_trY.bin',
+            'x_test': '/app/mnist_tsX.bin',
+            'y_test': '/app/mnist_tsY.bin',
             'model': '/app/net.bin'
         }
     )

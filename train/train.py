@@ -1,9 +1,12 @@
 import pyeddl.eddl as eddl
 from pyeddl.tensor import Tensor
+import os
+from sklearn.datasets import load_breast_cancer
 
 def main():
     print("[INFO] Download dataset")
-    eddl.download_mnist()
+    if not os.path.exists('mnist_trX.bin'):
+        print(eddl.download_mnist())
     print("----------------------------") 
 
     print("[INFO] Model init")
@@ -15,8 +18,7 @@ def main():
     layer = in_
     layer = eddl.LeakyReLu(eddl.Dense(layer, 64))
     layer = eddl.LeakyReLu(eddl.Dense(layer, 128))
-    layer = eddl.LeakyReLu(eddl.Dense(layer, 256))
-    layer = eddl.LeakyReLu(eddl.Dense(layer, 512))
+    layer = eddl.LeakyReLu(eddl.Dense(layer, 256))    layer = eddl.LeakyReLu(eddl.Dense(layer, 512))
     layer = eddl.LeakyReLu(eddl.Dense(layer, 1024))
     out = eddl.Softmax(eddl.Dense(layer, num_classes))
     net = eddl.Model([in_], [out])
@@ -32,8 +34,6 @@ def main():
 
     x_train = Tensor.load("mnist_trX.bin")
     y_train = Tensor.load("mnist_trY.bin")
-    x_test = Tensor.load("mnist_tsX.bin")
-    y_test = Tensor.load("mnist_tsY.bin")
     x_train.div_(255.0)
 
     # train
