@@ -1,7 +1,6 @@
 import pyeddl.eddl as eddl
 from pyeddl.tensor import Tensor
 import os
-from sklearn.datasets import load_breast_cancer
 
 def main():
     print("[INFO] Download dataset")
