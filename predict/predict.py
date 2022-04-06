@@ -2,7 +2,7 @@ import pyeddl.eddl as eddl
 from pyeddl.tensor import Tensor
 import argparse
 
-def main(model, x, y):
+def main(model, x_test, y_test):
     print("[INFO] Model init")
     batch_size = 100
     num_classes = 10
@@ -25,8 +25,8 @@ def main(model, x, y):
     )
     print("----------------------------") 
 
-    x_test = Tensor.load(x)
-    y_test = Tensor.load(y)
+    x_test = Tensor.load(x_test)
+    y_test = Tensor.load(y_test)
     x_test.div_(255.0)
 
     # load model weights eddl.load(model_weights)
@@ -51,7 +51,7 @@ def main(model, x, y):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model')
-    parser.add_argument('--x')
-    parser.add_argument('--y')
+    parser.add_argument('--x_test')
+    parser.add_argument('--y_test')
     args = parser.parse_args()
     main(args.model, args.x, args.y)

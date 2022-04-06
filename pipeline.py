@@ -22,8 +22,8 @@ def predict_op(model, x_test, y_test):
         image='nannakaroliina/pyeddlpredict:latest',
         arguments=[
             '--model', model,
-            '--x', x_test,
-            '--y', y_test
+            '--x_test', x_test,
+            '--y_test', y_test
         ]
     )
 

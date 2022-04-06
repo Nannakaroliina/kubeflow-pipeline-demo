@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: kubeflow-pipeline-for-eddl-demo-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.10, pipelines.kubeflow.org/pipeline_compilation_time: '2022-04-06T23:32:34.587061',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.10, pipelines.kubeflow.org/pipeline_compilation_time: '2022-04-07T00:18:51.270231',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Kubeflow pipeline demo
       with simple EDDL model training", "name": "Kubeflow pipeline for EDDL demo"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.10}
@@ -23,8 +23,8 @@ spec:
       - {name: train-model, template: train-model}
   - name: test-model
     container:
-      args: [--model, /tmp/inputs/input-0/data, --x, /tmp/inputs/input-1/data, --y,
-        /tmp/inputs/input-2/data]
+      args: [--model, /tmp/inputs/input-0/data, --x_test, /tmp/inputs/input-1/data,
+        --y_test, /tmp/inputs/input-2/data]
       image: nannakaroliina/pyeddlpredict:latest
     inputs:
       artifacts:
