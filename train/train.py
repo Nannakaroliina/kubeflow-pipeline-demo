@@ -1,11 +1,9 @@
 import pyeddl.eddl as eddl
 from pyeddl.tensor import Tensor
-import os
 
 def main():
     print("[INFO] Download dataset")
-    if not os.path.exists('mnist_trX.bin'):
-        print(eddl.download_mnist())
+    eddl.download_mnist()
     print("----------------------------") 
 
     print("[INFO] Model init")
