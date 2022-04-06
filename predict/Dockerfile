@@ -21,4 +21,6 @@ RUN conda --version && \
     conda config --add channels conda-forge && \
     conda env create -f install.yml
     
-ENTRYPOINT [ "conda", "run", "-n", "pyeddlkube", "python", "predict.py"]
+SHELL [ "conda", "run", "-n", "pyeddlkube", "/bin/bash", "-c"]
+
+ENTRYPOINT python predict.py
