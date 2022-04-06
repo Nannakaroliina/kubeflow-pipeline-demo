@@ -54,4 +54,4 @@ if __name__ == "__main__":
     parser.add_argument('--x_test')
     parser.add_argument('--y_test')
     args = parser.parse_args()
-    main(args.model, args.x, args.y)
+    main(args.model, args.x_test, args.y_test)
