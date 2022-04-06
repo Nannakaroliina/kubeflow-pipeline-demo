@@ -22,7 +22,7 @@ def _train_model(x_train, y_train):
 
 
 if __name__ == '__main__':
-    mlflow.set_tracking_uri("postgresql://mlflow_user:mlflow@localhost/mlflow_db")
+    mlflow.set_tracking_uri("http://0.0.0.0:8000")
     mlflow.set_experiment("train-model")
 
     parser = argparse.ArgumentParser()
