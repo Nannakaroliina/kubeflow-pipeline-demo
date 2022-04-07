@@ -26,9 +26,11 @@ def main(model, x_test, y_test):
     )
     print("----------------------------") 
 
+    print("[INFO] READ TEST DATA") 
     test_data = Tensor.fromarray(np.load(x_test).astype(np.float32))
     test_label = Tensor.fromarray(np.load(y_test).astype(np.float32))
     test_data.div_(255.0)
+    print("----------------------------")  
 
     # load model weights eddl.load(model_weights)
     print("[INFO] LOAD MODEL") 
