@@ -32,8 +32,16 @@ def main():
 
     x_train = Tensor.load("mnist_trX.bin")
     y_train = Tensor.load("mnist_trY.bin")
-    x_train.div_(255.0)
+    x_test = Tensor.load("mnist_tsX.bin")
+    y_test = Tensor.load("mnist_tsY.bin")
 
+    x_train.save("mnist_trX_saved.bin")
+    y_train.save("mnist_trY_saved.bin")
+    x_test.save("mnist_tsX_saved.bin")
+    y_test.save("mnist_tsY_saved.bin")
+
+    x_train.div_(255.0)
+        
     # train
     print("[INFO] Training ...")
     eddl.fit(net, [x_train], [y_train], batch_size, epochs)

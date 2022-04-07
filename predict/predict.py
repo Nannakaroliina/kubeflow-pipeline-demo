@@ -25,9 +25,9 @@ def main(model, x_test, y_test):
     )
     print("----------------------------") 
 
-    # x_test = Tensor.load(x_test)
-    # y_test = Tensor.load(y_test)
-    # x_test.div_(255.0)
+    x_test = Tensor.load(x_test)
+    y_test = Tensor.load(y_test)
+    x_test.div_(255.0)
 
     # load model weights eddl.load(model_weights)
     print("[INFO] LOAD MODEL") 
@@ -35,17 +35,17 @@ def main(model, x_test, y_test):
     print("----------------------------")  
 
     # predict to x[test]
-    # print("[INFO] PREDICT") 
-    # y_pred = eddl.predict(net, [x_test])
-    # print("----------------------------")  
+    print("[INFO] PREDICT") 
+    y_pred = eddl.predict(net, [x_test])
+    print("----------------------------")  
 
-    # print("[INFO] Y_PRED") 
-    # print(y_pred[0].getdata())
-    # print("----------------------------")  
+    print("[INFO] Y_PRED") 
+    print(y_pred[0].getdata())
+    print("----------------------------")  
 
-    # print("[INFO] GROUND TRUTH / LABELS") 
-    # print(y_test.getdata())
-    # print("----------------------------")  
+    print("[INFO] GROUND TRUTH / LABELS") 
+    print(y_test.getdata())
+    print("----------------------------")  
 
 
 if __name__ == "__main__":
