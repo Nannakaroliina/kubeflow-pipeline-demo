@@ -7,10 +7,8 @@ def train_op():
         name='Train Model',
         image='nannakaroliina/pyeddltrain:latest',
         file_outputs={
-            'x_train': '/app/mnist_trX_saved.bin',
-            'y_train': '/app/mnist_trY_saved.bin',
-            'x_test': '/app/mnist_tsX_saved.bin',
-            'y_test': '/app/mnist_tsY_saved.bin',
+            'x_test': '/app/x_test.npy',
+            'y_test': '/app/y_test.npy',
             'model': '/app/net.bin'
         }
     )
@@ -38,8 +36,8 @@ def kubeflow_eddl_pipeline():
 
     _test_op = predict_op(
         dsl.InputArgumentPath(_train_op.outputs['model']),
-        dsl.InputArgumentPath(_train_op.outputs['model']),
-        dsl.InputArgumentPath(_train_op.outputs['model'])
+        dsl.InputArgumentPath(_train_op.outputs['x_test']),
+        dsl.InputArgumentPath(_train_op.outputs['y_test'])
     ).after(_train_op)
 
 

@@ -1,5 +1,6 @@
 import pyeddl.eddl as eddl
 from pyeddl.tensor import Tensor
+import numpy as np
 
 def main():
     print("[INFO] Download dataset")
@@ -34,12 +35,11 @@ def main():
     y_train = Tensor.load("mnist_trY.bin")
     x_test = Tensor.load("mnist_tsX.bin")
     y_test = Tensor.load("mnist_tsY.bin")
-
-    Tensor.save(x_test, "mnist_tsX_saved.bin")
-    Tensor.save(y_test, "mnist_tsY_saved.bin")
-
     x_train.div_(255.0)
-
+    
+    np.save('x_test.npy', x_test.getdata())
+    np.save('y_test.npy', y_test.getdata())
+    
     # train
     print("[INFO] Training ...")
     eddl.fit(net, [x_train], [y_train], batch_size, epochs)

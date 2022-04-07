@@ -1,6 +1,7 @@
 import pyeddl.eddl as eddl
 from pyeddl.tensor import Tensor
 import argparse
+import numpy as np
 
 def main(model, x_test, y_test):
     print("[INFO] Model init")
@@ -25,8 +26,8 @@ def main(model, x_test, y_test):
     )
     print("----------------------------") 
 
-    test_data = Tensor.load(x_test)
-    test_label = Tensor.load(y_test)
+    test_data = Tensor.fromarray(np.load(x_test).astype(np.float32))
+    test_label = Tensor.fromarray(np.load(y_test).astype(np.float32))
     test_data.div_(255.0)
 
     # load model weights eddl.load(model_weights)
