@@ -2,10 +2,10 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: kubeflow-pipeline-for-eddl-demo-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.10, pipelines.kubeflow.org/pipeline_compilation_time: '2022-04-07T11:44:58.377281',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-04-07T10:58:44.179989',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Kubeflow pipeline demo
       with simple EDDL model training", "name": "Kubeflow pipeline for EDDL demo"}'}
-  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.10}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
 spec:
   entrypoint: kubeflow-pipeline-for-eddl-demo
   templates:
@@ -18,6 +18,8 @@ spec:
         arguments:
           artifacts:
           - {name: train-model-model, from: '{{tasks.train-model.outputs.artifacts.train-model-model}}'}
+          - {name: train-model-x_test, from: '{{tasks.train-model.outputs.artifacts.train-model-x_test}}'}
+          - {name: train-model-y_test, from: '{{tasks.train-model.outputs.artifacts.train-model-y_test}}'}
       - {name: train-model, template: train-model}
   - name: test-model
     container:
@@ -27,13 +29,13 @@ spec:
     inputs:
       artifacts:
       - {name: train-model-model, path: /tmp/inputs/input-0/data}
-      - {name: train-model-model, path: /tmp/inputs/input-1/data}
-      - {name: train-model-model, path: /tmp/inputs/input-2/data}
+      - {name: train-model-x_test, path: /tmp/inputs/input-1/data}
+      - {name: train-model-y_test, path: /tmp/inputs/input-2/data}
     metadata:
       labels:
-        pipelines.kubeflow.org/kfp_sdk_version: 1.8.10
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
-        pipelines.kubeflow.org/enable_caching: "true"
+        pipelines.kubeflow.org/enable_caching: "false"
   - name: train-model
     container: {image: 'nannakaroliina/pyeddltrain:latest'}
     outputs:
@@ -45,7 +47,7 @@ spec:
       - {name: train-model-y_train, path: /app/mnist_trY_saved.bin}
     metadata:
       labels:
-        pipelines.kubeflow.org/kfp_sdk_version: 1.8.10
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
   arguments:

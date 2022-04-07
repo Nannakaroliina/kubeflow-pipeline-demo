@@ -38,8 +38,8 @@ def kubeflow_eddl_pipeline():
 
     _test_op = predict_op(
         dsl.InputArgumentPath(_train_op.outputs['model']),
-        dsl.InputArgumentPath(_train_op.outputs['x_test']),
-        dsl.InputArgumentPath(_train_op.outputs['y_test'])
+        dsl.InputArgumentPath(_train_op.outputs['model']),
+        dsl.InputArgumentPath(_train_op.outputs['model'])
     ).after(_train_op)
 
 
