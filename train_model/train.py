@@ -24,7 +24,7 @@ def _train_model(x_train, y_train):
 if __name__ == '__main__':
     #model = pickle.load(open(model_name, 'rb'))
     #mlflow.set_tracking_uri("http://127.0.0.1:8000")
-    print("CACAO")
+    print("COCOA")
     parser = argparse.ArgumentParser()
     parser.add_argument('--x_train')
     parser.add_argument('--y_train')
