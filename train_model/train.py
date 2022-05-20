@@ -22,7 +22,7 @@ def _train_model(x_train, y_train):
 
 
 if __name__ == '__main__':
-    model = pickle.load(open(model_name, 'rb'))
+    #model = pickle.load(open(model_name, 'rb'))
     #mlflow.set_tracking_uri("http://127.0.0.1:8000")
     print("CACAO")
     parser = argparse.ArgumentParser()
