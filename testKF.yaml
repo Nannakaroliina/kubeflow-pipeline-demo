@@ -1,0 +1,437 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: end-to-end-pipeline
+  annotations:
+    tekton.dev/output_artifacts: '{"convert-katib-results": [{"key": "artifacts/$PIPELINERUN/convert-katib-results/Output.tgz",
+      "name": "convert-katib-results-Output", "path": "/tmp/outputs/Output/data"}],
+      "katib-launch-experiment": [{"key": "artifacts/$PIPELINERUN/katib-launch-experiment/Best-Parameter-Set.tgz",
+      "name": "katib-launch-experiment-Best-Parameter-Set", "path": "/tmp/outputs/Best_Parameter_Set/data"}],
+      "serve-a-model-with-kserve": [{"key": "artifacts/$PIPELINERUN/serve-a-model-with-kserve/InferenceService-Status.tgz",
+      "name": "serve-a-model-with-kserve-InferenceService-Status", "path": "/tmp/outputs/InferenceService_Status/data"}]}'
+    tekton.dev/input_artifacts: '{"convert-katib-results": [{"name": "katib-launch-experiment-Best-Parameter-Set",
+      "parent_task": "katib-launch-experiment"}], "kubeflow-launch-tfjob": [{"name":
+      "convert-katib-results-Output", "parent_task": "convert-katib-results"}, {"name":
+      "model-volume-name", "parent_task": "model-volume"}], "serve-a-model-with-kserve":
+      [{"name": "model-volume-name", "parent_task": "model-volume"}]}'
+    tekton.dev/artifact_bucket: mlpipeline
+    tekton.dev/artifact_endpoint: minio-service.kubeflow:9000
+    tekton.dev/artifact_endpoint_scheme: http://
+    tekton.dev/artifact_items: '{"convert-katib-results": [["Output", "$(results.output.path)"]],
+      "katib-launch-experiment": [["Best-Parameter-Set", "$(results.best-parameter-set.path)"]],
+      "kubeflow-launch-tfjob": [], "model-volume": [], "serve-a-model-with-kserve":
+      [["InferenceService-Status", "$(results.inferenceservice-status.path)"]]}'
+    sidecar.istio.io/inject: "false"
+    pipelines.kubeflow.org/big_data_passing_format: $(workspaces.$TASK_NAME.path)/artifacts/$ORIG_PR_NAME/$TASKRUN_NAME/$TASK_PARAM_NAME
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "An end to end mnist example
+      including hyperparameter tuning, train and inference", "inputs": [{"default":
+      "mnist-e2e", "name": "name", "optional": true}, {"default": "kubeflow-user-example-com",
+      "name": "namespace", "optional": true}, {"default": "200", "name": "training_steps",
+      "optional": true}], "name": "end-to-end-pipeline"}'
+spec:
+  params:
+  - name: name
+    value: mnist-e2e
+  - name: namespace
+    value: kubeflow-user-example-com
+  - name: training_steps
+    value: '200'
+  pipelineSpec:
+    params:
+    - name: name
+      default: mnist-e2e
+    - name: namespace
+      default: kubeflow-user-example-com
+    - name: training_steps
+      default: '200'
+    tasks:
+    - name: katib-launch-experiment
+      params:
+      - name: name
+        value: $(params.name)
+      - name: namespace
+        value: $(params.namespace)
+      - name: training_steps
+        value: $(params.training_steps)
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - --experiment-name
+          - $(inputs.params.name)
+          - --experiment-namespace
+          - $(inputs.params.namespace)
+          - --experiment-spec
+          - '{"algorithm": {"algorithmName": "random"}, "maxFailedTrialCount": 3,
+            "maxTrialCount": 5, "objective": {"goal": 0.001, "objectiveMetricName":
+            "loss", "type": "minimize"}, "parallelTrialCount": 2, "parameters": [{"feasibleSpace":
+            {"max": "0.05", "min": "0.01"}, "name": "learning_rate", "parameterType":
+            "double"}, {"feasibleSpace": {"max": "100", "min": "80"}, "name": "batch_size",
+            "parameterType": "int"}], "trialTemplate": {"primaryContainerName": "tensorflow",
+            "primaryPodLabels": {"training.kubeflow.org/job-role": "master"}, "trialParameters":
+            [{"description": "Learning rate for the training model", "name": "learningRate",
+            "reference": "learning_rate"}, {"description": "Batch size for the model",
+            "name": "batchSize", "reference": "batch_size"}], "trialSpec": {"apiVersion":
+            "kubeflow.org/v1", "kind": "TFJob", "spec": {"tfReplicaSpecs": {"Chief":
+            {"replicas": 1, "restartPolicy": "OnFailure", "template": {"metadata":
+            {"annotations": {"sidecar.istio.io/inject": "false"}}, "spec": {"containers":
+            [{"command": ["python", "/opt/model.py", "--tf-train-steps=$(inputs.params.training_steps)",
+            "--tf-learning-rate=${trialParameters.learningRate}", "--tf-batch-size=${trialParameters.batchSize}"],
+            "image": "docker.io/liuhougangxa/tf-estimator-mnist", "name": "tensorflow"}]}}},
+            "Worker": {"replicas": 1, "restartPolicy": "OnFailure", "template": {"metadata":
+            {"annotations": {"sidecar.istio.io/inject": "false"}}, "spec": {"containers":
+            [{"command": ["python", "/opt/model.py", "--tf-train-steps=$(inputs.params.training_steps)",
+            "--tf-learning-rate=${trialParameters.learningRate}", "--tf-batch-size=${trialParameters.batchSize}"],
+            "image": "docker.io/liuhougangxa/tf-estimator-mnist", "name": "tensorflow"}]}}}}}}}}'
+          - --experiment-timeout-minutes
+          - '60'
+          - --delete-after-done
+          - "False"
+          - --output-file
+          - $(results.best-parameter-set.path)
+          command:
+          - python
+          - src/launch_experiment.py
+          image: docker.io/kubeflowkatib/kubeflow-pipelines-launcher
+        params:
+        - name: name
+        - name: namespace
+        - name: training_steps
+        results:
+        - name: best-parameter-set
+          description: /tmp/outputs/Best_Parameter_Set/data
+        metadata:
+          labels:
+            pipelines.kubeflow.org/pipelinename: ''
+            pipelines.kubeflow.org/generation: ''
+            pipelines.kubeflow.org/cache_enabled: "true"
+          annotations:
+            pipelines.kubeflow.org/component_spec_digest: '{"name": "Katib - Launch
+              Experiment", "outputs": [{"description": "The hyperparameter set of
+              the best Experiment Trial", "name": "Best Parameter Set", "type": "JsonObject"}],
+              "version": "Katib - Launch Experiment@sha256=c6cee84c88117477853e61faa06eecb3ade6f19599b052f996a1bc7282f3f465"}'
+            tekton.dev/template: ''
+      timeout: 525600m
+    - name: model-volume
+      params:
+      - name: action
+        value: create
+      - name: output
+        value: |
+          - name: manifest
+            valueFrom: '{}'
+          - name: name
+            valueFrom: '{.metadata.name}'
+          - name: size
+            valueFrom: '{.status.capacity.storage}'
+      taskSpec:
+        params:
+        - description: Action on the resource
+          name: action
+          type: string
+        - default: strategic
+          description: Merge strategy when using action patch
+          name: merge-strategy
+          type: string
+        - default: ''
+          description: An express to retrieval data from resource.
+          name: output
+          type: string
+        - default: ''
+          description: A label selector express to decide if the action on resource
+            is success.
+          name: success-condition
+          type: string
+        - default: ''
+          description: A label selector express to decide if the action on resource
+            is failure.
+          name: failure-condition
+          type: string
+        - default: aipipeline/kubectl-wrapper:1.2.1
+          description: Kubectl wrapper image
+          name: image
+          type: string
+        - default: "false"
+          description: Enable set owner reference for created resource.
+          name: set-ownerreference
+          type: string
+        steps:
+        - args:
+          - --action=$(params.action)
+          - --merge-strategy=$(params.merge-strategy)
+          - |
+            --manifest=apiVersion: v1
+            kind: PersistentVolumeClaim
+            metadata:
+              name: $(PIPELINERUN)-model-volume
+            spec:
+              accessModes:
+              - ReadWriteMany
+              resources:
+                requests:
+                  storage: 1Gi
+          - --output=$(params.output)
+          - --success-condition=$(params.success-condition)
+          - --failure-condition=$(params.failure-condition)
+          - --set-ownerreference=$(params.set-ownerreference)
+          image: $(params.image)
+          name: main
+          resources: {}
+          env:
+          - name: PIPELINERUN
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tekton.dev/pipelineRun']
+        results:
+        - name: manifest
+          description: '{}'
+        - name: name
+          description: '{.metadata.name}'
+        - name: size
+          description: '{.status.capacity.storage}'
+        metadata:
+          labels:
+            pipelines.kubeflow.org/pipelinename: ''
+            pipelines.kubeflow.org/generation: ''
+            pipelines.kubeflow.org/cache_enabled: "true"
+          annotations:
+            tekton.dev/template: ''
+      timeout: 525600m
+    - name: convert-katib-results
+      params:
+      - name: katib-launch-experiment-Best-Parameter-Set
+        value: $(tasks.katib-launch-experiment.results.best-parameter-set)
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - --katib-results
+          - $(inputs.params.katib-launch-experiment-Best-Parameter-Set)
+          - '----output-paths'
+          - $(results.output.path)
+          command:
+          - sh
+          - -ec
+          - |
+            program_path=$(mktemp)
+            printf "%s" "$0" > "$program_path"
+            python3 -u "$program_path" "$@"
+          - |
+            def convert_katib_results(katib_results):
+                import json
+                import pprint
+                katib_results_json = json.loads(katib_results)
+                print("Katib results:")
+                pprint.pprint(katib_results_json)
+                best_hps = []
+                for pa in katib_results_json["currentOptimalTrial"]["parameterAssignments"]:
+                    if pa["name"] == "learning_rate":
+                        best_hps.append("--tf-learning-rate=" + pa["value"])
+                    elif pa["name"] == "batch_size":
+                        best_hps.append("--tf-batch-size=" + pa["value"])
+                print("Best Hyperparameters: {}".format(best_hps))
+                return " ".join(best_hps)
+
+            def _serialize_str(str_value: str) -> str:
+                if not isinstance(str_value, str):
+                    raise TypeError('Value "{}" has type "{}" instead of str.'.format(
+                        str(str_value), str(type(str_value))))
+                return str_value
+
+            import argparse
+            _parser = argparse.ArgumentParser(prog='Convert katib results', description='')
+            _parser.add_argument("--katib-results", dest="katib_results", type=str, required=True, default=argparse.SUPPRESS)
+            _parser.add_argument("----output-paths", dest="_output_paths", type=str, nargs=1)
+            _parsed_args = vars(_parser.parse_args())
+            _output_files = _parsed_args.pop("_output_paths", [])
+
+            _outputs = convert_katib_results(**_parsed_args)
+
+            _outputs = [_outputs]
+
+            _output_serializers = [
+                _serialize_str,
+
+            ]
+
+            import os
+            for idx, output_file in enumerate(_output_files):
+                try:
+                    os.makedirs(os.path.dirname(output_file))
+                except OSError:
+                    pass
+                with open(output_file, 'w') as f:
+                    f.write(_output_serializers[idx](_outputs[idx]))
+          image: python:3.7
+        params:
+        - name: katib-launch-experiment-Best-Parameter-Set
+        results:
+        - name: output
+          description: /tmp/outputs/Output/data
+        metadata:
+          labels:
+            pipelines.kubeflow.org/pipelinename: ''
+            pipelines.kubeflow.org/generation: ''
+            pipelines.kubeflow.org/cache_enabled: "true"
+          annotations:
+            pipelines.kubeflow.org/component_spec_digest: '{"name": "Convert katib
+              results", "outputs": [{"name": "Output", "type": "String"}], "version":
+              "Convert katib results@sha256=62de74e12174c4114a5f52d964782aa1fd1d1119e9ad0fa017cabec72b9a54ee"}'
+            tekton.dev/template: ''
+      timeout: 525600m
+    - name: kubeflow-launch-tfjob
+      params:
+      - name: convert-katib-results-Output
+        value: $(tasks.convert-katib-results.results.output)
+      - name: model-volume-name
+        value: $(tasks.model-volume.results.name)
+      - name: name
+        value: $(params.name)
+      - name: namespace
+        value: $(params.namespace)
+      - name: training_steps
+        value: $(params.training_steps)
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - --name
+          - $(inputs.params.name)
+          - --namespace
+          - $(inputs.params.namespace)
+          - --version
+          - v1
+          - --activeDeadlineSeconds
+          - '-1'
+          - --backoffLimit
+          - '-1'
+          - --cleanPodPolicy
+          - Running
+          - --ttlSecondsAfterFinished
+          - '-1'
+          - --psSpec
+          - '{}'
+          - --workerSpec
+          - '{"replicas": 1, "restartPolicy": "OnFailure", "template": {"metadata":
+            {"annotations": {"sidecar.istio.io/inject": "false"}}, "spec": {"containers":
+            [{"name": "tensorflow", "image": "docker.io/liuhougangxa/tf-estimator-mnist",
+            "command": ["sh", "-c"], "args": ["python /opt/model.py --tf-export-dir=/mnt/export
+            --tf-train-steps=$(inputs.params.training_steps) $(inputs.params.convert-katib-results-Output)"]}]}}}'
+          - --chiefSpec
+          - '{"replicas": 1, "restartPolicy": "OnFailure", "template": {"metadata":
+            {"annotations": {"sidecar.istio.io/inject": "false"}}, "spec": {"containers":
+            [{"name": "tensorflow", "image": "docker.io/liuhougangxa/tf-estimator-mnist",
+            "command": ["sh", "-c"], "args": ["python /opt/model.py --tf-export-dir=/mnt/export
+            --tf-train-steps=$(inputs.params.training_steps) $(inputs.params.convert-katib-results-Output)"],
+            "volumeMounts": [{"mountPath": "/mnt/export", "name": "model-volume"}]}],
+            "volumes": [{"name": "model-volume", "persistentVolumeClaim": {"claimName":
+            "$(inputs.params.model-volume-name)"}}]}}}'
+          - --evaluatorSpec
+          - '{}'
+          - --tfjobTimeoutMinutes
+          - '60'
+          - --deleteAfterDone
+          - "False"
+          command:
+          - python
+          - /ml/launch_tfjob.py
+          image: nikenano/launchernew:latest
+        params:
+        - name: convert-katib-results-Output
+        - name: model-volume-name
+        - name: name
+        - name: namespace
+        - name: training_steps
+        metadata:
+          labels:
+            pipelines.kubeflow.org/pipelinename: ''
+            pipelines.kubeflow.org/generation: ''
+            pipelines.kubeflow.org/cache_enabled: "true"
+          annotations:
+            pipelines.kubeflow.org/component_spec_digest: '{"name": "Kubeflow - Launch
+              TFJob", "outputs": [], "version": "Kubeflow - Launch TFJob@sha256=9e74917bf7f989bfcf6510b046ef7a8488cb9a97f645e6753e5a879b3234949e"}'
+            tekton.dev/template: ''
+      timeout: 525600m
+    - name: serve-a-model-with-kserve
+      params:
+      - name: model-volume-name
+        value: $(tasks.model-volume.results.name)
+      - name: name
+        value: $(params.name)
+      - name: namespace
+        value: $(params.namespace)
+      taskSpec:
+        steps:
+        - name: main
+          args:
+          - -u
+          - kservedeployer.py
+          - --action
+          - create
+          - --model-name
+          - ''
+          - --model-uri
+          - ''
+          - --canary-traffic-percent
+          - '100'
+          - --namespace
+          - ''
+          - --framework
+          - ''
+          - --custom-model-spec
+          - '{}'
+          - --autoscaling-target
+          - '0'
+          - --service-account
+          - ''
+          - --enable-istio-sidecar
+          - "True"
+          - --output-path
+          - $(results.inferenceservice-status.path)
+          - --inferenceservice-yaml
+          - |2
+
+            apiVersion: "serving.kserve.io/v1beta1"
+            kind: "InferenceService"
+            metadata:
+              name: $(inputs.params.name)
+              namespace: $(inputs.params.namespace)
+              annotations:
+                "sidecar.istio.io/inject": "false"
+            spec:
+              predictor:
+                tensorflow:
+                  storageUri: "pvc://$(inputs.params.model-volume-name)/"
+          - --watch-timeout
+          - '300'
+          - --min-replicas
+          - '-1'
+          - --max-replicas
+          - '-1'
+          - --request-timeout
+          - '60'
+          command:
+          - python
+          image: quay.io/aipipeline/kserve-component:v0.7.0
+        params:
+        - name: model-volume-name
+        - name: name
+        - name: namespace
+        results:
+        - name: inferenceservice-status
+          description: /tmp/outputs/InferenceService_Status/data
+        metadata:
+          labels:
+            pipelines.kubeflow.org/pipelinename: ''
+            pipelines.kubeflow.org/generation: ''
+            pipelines.kubeflow.org/cache_enabled: "true"
+          annotations:
+            pipelines.kubeflow.org/component_spec_digest: '{"name": "Serve a model
+              with KServe", "outputs": [{"description": "Status JSON output of InferenceService",
+              "name": "InferenceService Status", "type": "String"}], "version": "Serve
+              a model with KServe@sha256=5ebeb512ac87f52911197079f2b48db34f42bf7fde3ce373ab39e79ae38c00ba"}'
+            tekton.dev/template: ''
+      runAfter:
+      - kubeflow-launch-tfjob
+      timeout: 525600m
+  timeout: 525600m

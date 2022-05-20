@@ -8,7 +8,7 @@ from kfp import dsl
 def preprocess_op():
     return dsl.ContainerOp(
         name='Preprocess Data',
-        image='nannakaroliina/kubeflow_pipeline_mlflow_preprocessing:latest',
+        image='kubeflow_pipeline_mlflow_preprocessing:latest',
         arguments=[],
         file_outputs={
             'x_train': '/app/x_train.npy',
@@ -22,7 +22,7 @@ def preprocess_op():
 def train_op(x_train, y_train):
     return dsl.ContainerOp(
         name='Train Model',
-        image='nannakaroliina/kubeflow_pipeline_mlflow_train:latest',
+        image='kubeflow_pipeline_mlflow_train:latest',
         arguments=[
             '--x_train', x_train,
             '--y_train', y_train
@@ -36,7 +36,7 @@ def train_op(x_train, y_train):
 def predict_op(x_test, y_test, model):
     return dsl.ContainerOp(
         name='Test Model',
-        image='nannakaroliina/kubeflow_pipeline_mlflow_predict:latest',
+        image='kubeflow_pipeline_mlflow_predict:latest',
         arguments=[
             '--x_test', x_test,
             '--y_test', y_test,

@@ -1,5 +1,7 @@
 name: Docker
 on:
+  add:
+    branches: [ mlflow-integration ]
   push:
     branches: [ mlflow-integration ]
   pull_request:
