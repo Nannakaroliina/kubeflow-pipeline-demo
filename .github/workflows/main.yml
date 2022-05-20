@@ -1,6 +1,6 @@
 name: Docker
 on:
-  add:
+  commit:
     branches: [ mlflow-integration ]
   push:
     branches: [ mlflow-integration ]
