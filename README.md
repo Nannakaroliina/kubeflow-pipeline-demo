@@ -36,6 +36,8 @@ work unless the code is merged to main. I haven't added action workflow for buil
 * Kubernetes
 * Kubeflow (kind, K3s, K3ai)
 * MLflow (local unless server available)
+* Conda
+* Python, pysftp & psycopg2-binary libs for conda env
 * PostgreSQL
 
 ## Installation steps for local Kubeflow Pipelines
@@ -116,11 +118,30 @@ After run the results will be available on the side panel.
 
 ## Setting up the local MLflow
 
-For the backend storage, one desired database needs to be available. 
-In this demo, PostgreSQL is chosen database and it can be replaces as you desire.
+If you don't have conda installed, you find it from [Anaconda Distribution](https://www.anaconda.com/products/distribution#linux)
+Local setup uses virtual env, in this part we use conda:
+
+### Setup conda env
+
+```shell
+conda create -n mlflow_env
+conda activate mlflow_env
+```
+
+Install needed libs for conda env:
+
+```shell
+conda install python
+pip install mlflow
+pip install pysftp
+pip install psycopg2/binary
+```
+
 
 ### Setup the PostgreSQL
 
+For the backend storage, one desired database needs to be available. 
+In this demo, PostgreSQL is chosen database and it can be replaces as you desire.
 If you don't have postgres installed, install it before next step. Find the correct version from
 [PostgreSQL downloads](https://www.postgresql.org/download/)
 
