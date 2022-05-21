@@ -32,7 +32,7 @@ spec:
   - name: preprocess-data
     container:
       args: []
-      image: nannakaroliina/kubeflow_pipeline_mlflow_preprocessing:latest
+      image: milowb/kubeflow_pipeline_mlflow_preprocessing:latest
     outputs:
       artifacts:
       - {name: preprocess-data-x_test, path: /app/x_test.npy}
@@ -48,7 +48,7 @@ spec:
     container:
       args: [--x_test, /tmp/inputs/input-0/data, --y_test, /tmp/inputs/input-1/data,
         --model, /tmp/inputs/input-2/data]
-      image: nannakaroliina/kubeflow_pipeline_mlflow_predict:latest
+      image: milowb/kubeflow_pipeline_mlflow_predict:latest
     inputs:
       artifacts:
       - {name: preprocess-data-x_test, path: /tmp/inputs/input-0/data}
@@ -65,7 +65,7 @@ spec:
   - name: train-model
     container:
       args: [--x_train, /tmp/inputs/input-0/data, --y_train, /tmp/inputs/input-1/data]
-      image: nannakaroliina/kubeflow_pipeline_mlflow_train:latest
+      image: milowb/kubeflow_pipeline_mlflow_train:latest
     inputs:
       artifacts:
       - {name: preprocess-data-x_train, path: /tmp/inputs/input-0/data}
