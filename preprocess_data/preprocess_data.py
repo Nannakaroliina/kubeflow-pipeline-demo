@@ -34,6 +34,6 @@ def optimize(x_train, x_test):
 
 
 if __name__ == '__main__':
-    print('Preprocessing data...')
+    print('Preprocessing data...COCOA3')
 
     _preprocess_data()

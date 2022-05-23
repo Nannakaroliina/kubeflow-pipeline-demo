@@ -1,0 +1,15 @@
+artifact_uri: file:///home/kube/kubeflow-pipeline-demo/train_model/mlruns/0/13f5c0ff0e834cee91c72aab238e57c4/artifacts
+end_time: 1653215584084
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 13f5c0ff0e834cee91c72aab238e57c4
+run_uuid: 13f5c0ff0e834cee91c72aab238e57c4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1653215581522
+status: 4
+tags: []
+user_id: kube

@@ -2,11 +2,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: kubeflow-pipeline-and-mlflow-demo-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-04-06T14:33:48.426766',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.11, pipelines.kubeflow.org/pipeline_compilation_time: '2022-05-21T17:07:11.263824',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Kubeflow pipeline and
       mlflow demo with simple model training", "name": "Kubeflow pipeline and mlflow
       demo"}'}
-  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.11}
 spec:
   entrypoint: kubeflow-pipeline-and-mlflow-demo
   templates:
@@ -41,7 +41,7 @@ spec:
       - {name: preprocess-data-y_train, path: /app/y_train.npy}
     metadata:
       labels:
-        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.11
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
   - name: test-model
@@ -59,7 +59,7 @@ spec:
       - {name: test-model-f1_score, path: /app/results.txt}
     metadata:
       labels:
-        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.11
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
   - name: train-model
@@ -75,7 +75,7 @@ spec:
       - {name: train-model-model, path: /app/model.plk}
     metadata:
       labels:
-        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.11
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
   arguments:

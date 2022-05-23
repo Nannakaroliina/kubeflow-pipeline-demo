@@ -8,7 +8,7 @@ from kfp import dsl
 def preprocess_op():
     return dsl.ContainerOp(
         name='Preprocess Data',
-        image='kubeflow_pipeline_mlflow_preprocessing:latest',
+        image='milowb/kubeflow_pipeline_mlflow_preprocessing:latest',
         arguments=[],
         file_outputs={
             'x_train': '/app/x_train.npy',
@@ -22,7 +22,7 @@ def preprocess_op():
 def train_op(x_train, y_train):
     return dsl.ContainerOp(
         name='Train Model',
-        image='kubeflow_pipeline_mlflow_train:latest',
+        image='milowb/kubeflow_pipeline_mlflow_train:latest',
         arguments=[
             '--x_train', x_train,
             '--y_train', y_train
@@ -36,7 +36,7 @@ def train_op(x_train, y_train):
 def predict_op(x_test, y_test, model):
     return dsl.ContainerOp(
         name='Test Model',
-        image='kubeflow_pipeline_mlflow_predict:latest',
+        image='milowb/kubeflow_pipeline_mlflow_predict:latest',
         arguments=[
             '--x_test', x_test,
             '--y_test', y_test,
@@ -71,3 +71,4 @@ if __name__ == '__main__':
     # Build a pipeline yaml file to be uploaded to Kubeflow Pipeline UI
     # TODO implement local run option without manual pipeline creation
     kfp.compiler.Compiler().compile(kubeflow_mlflow_pipeline, 'pipeline.yaml')
+    
