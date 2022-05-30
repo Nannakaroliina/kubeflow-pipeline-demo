@@ -39,6 +39,10 @@ Follow the steps in [Kubeflow Documentation, Local Deployment](https://www.kubef
 
 - YOUR_KIND_DIRECTORY: /usr/local/bin
 
+## Creating cluster on kind
+```
+kind create cluster
+```
 
 ## Deploying Kubeflow Pipelines
 Following installation works for all environments (kind, K3s, K3ai).
