@@ -1,9 +1,7 @@
-FROM python:3.6-slim
+FROM python:3.8-slim
 WORKDIR /app
 
-COPY requirements.txt ./requirements.txt
-RUN pip install --upgrade pip
+COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY predict.py ./predict.py
 
 ENTRYPOINT [ "python", "predict.py" ]

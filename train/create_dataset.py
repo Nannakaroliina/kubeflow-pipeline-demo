@@ -1,17 +1,13 @@
-from feast import FeatureStore
 import pandas as pd
-from joblib import load
-import argparse
-import shutil
+from feast import FeatureStore
+from feast.infra.offline_stores.file_source import SavedDatasetFileStorage
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--featurestore')
-parser.add_argument('--model')
-args = parser.parse_args()
+store = FeatureStore(repo_path='breast_cancer/')
+entity_df = pd.read_parquet(path="breast_cancer/data/label.parquet")  
 
-shutil.unpack_archive(args.featurestore, 'breast_cancer', 'zip')
-store = FeatureStore(repo_path="breast_cancer/")
-infer_features = [
+data_retrieval = store.get_historical_features(
+    entity_df=entity_df,
+    features=[
         "breast_feature_view:mean radius",
         "breast_feature_view:mean texture",
         "breast_feature_view:mean perimeter",
@@ -43,12 +39,10 @@ infer_features = [
         "breast_feature_view:worst symmetry",
         "breast_feature_view:worst fractal dimension"
     ]
-test_data = store.get_online_features(
-    features=infer_features,    
-    entity_rows=[{"patient_id": 568}, {"patient_id": 567}]
-).to_dict()
-test_df = pd.DataFrame.from_dict(data=test_data)
-reg = load(args.model)
-predictions = reg.predict(
-    test_df[sorted(test_df.drop("patient_id", axis=1))])
-print(predictions)
+)
+
+dataset = store.create_saved_dataset(
+    from_=data_retrieval,
+    name="breast_cancer_dataset",
+    storage=SavedDatasetFileStorage("breast_cancer/data/breast_cancer_dataset.parquet")
+)

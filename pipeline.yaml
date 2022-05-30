@@ -1,80 +1,47 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: kubeflow-pipeline-demo-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2021-12-07T10:04:36.640651',
+  generateName: kubeflow-feast-demo-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.10, pipelines.kubeflow.org/pipeline_compilation_time: '2022-05-30T10:27:52.643850',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Kubeflow pipeline demo
-      with simple model training", "name": "Kubeflow pipeline demo"}'}
-  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
+      with Feast", "name": "Kubeflow Feast demo"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.10}
 spec:
-  entrypoint: kubeflow-pipeline-demo
+  entrypoint: kubeflow-feast-demo
   templates:
-  - name: kubeflow-pipeline-demo
+  - name: kubeflow-feast-demo
     dag:
       tasks:
-      - {name: preprocess-data, template: preprocess-data}
       - name: test-model
         template: test-model
-        dependencies: [preprocess-data, train-model]
+        dependencies: [train-model]
         arguments:
           artifacts:
-          - {name: preprocess-data-x_test, from: '{{tasks.preprocess-data.outputs.artifacts.preprocess-data-x_test}}'}
-          - {name: preprocess-data-y_test, from: '{{tasks.preprocess-data.outputs.artifacts.preprocess-data-y_test}}'}
+          - {name: train-model-featurestore, from: '{{tasks.train-model.outputs.artifacts.train-model-featurestore}}'}
           - {name: train-model-model, from: '{{tasks.train-model.outputs.artifacts.train-model-model}}'}
-      - name: train-model
-        template: train-model
-        dependencies: [preprocess-data]
-        arguments:
-          artifacts:
-          - {name: preprocess-data-x_train, from: '{{tasks.preprocess-data.outputs.artifacts.preprocess-data-x_train}}'}
-          - {name: preprocess-data-y_train, from: '{{tasks.preprocess-data.outputs.artifacts.preprocess-data-y_train}}'}
-  - name: preprocess-data
-    container:
-      args: []
-      image: nannakaroliina/kubeflow_pipeline_demo_preprocessing:latest
-    outputs:
-      artifacts:
-      - {name: preprocess-data-x_test, path: /app/x_test.npy}
-      - {name: preprocess-data-x_train, path: /app/x_train.npy}
-      - {name: preprocess-data-y_test, path: /app/y_test.npy}
-      - {name: preprocess-data-y_train, path: /app/y_train.npy}
-    metadata:
-      labels:
-        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
-        pipelines.kubeflow.org/pipeline-sdk-type: kfp
-        pipelines.kubeflow.org/enable_caching: "true"
+      - {name: train-model, template: train-model}
   - name: test-model
     container:
-      args: [--x_test, /tmp/inputs/input-0/data, --y_test, /tmp/inputs/input-1/data,
-        --model, /tmp/inputs/input-2/data]
-      image: nannakaroliina/kubeflow_pipeline_demo_predict:latest
+      args: [--featurestore, /tmp/inputs/input-0/data, --model, /tmp/inputs/input-1/data]
+      image: nannakaroliina/feastpredict:latest
     inputs:
       artifacts:
-      - {name: preprocess-data-x_test, path: /tmp/inputs/input-0/data}
-      - {name: preprocess-data-y_test, path: /tmp/inputs/input-1/data}
-      - {name: train-model-model, path: /tmp/inputs/input-2/data}
-    outputs:
-      artifacts:
-      - {name: test-model-f1_score, path: /app/results.txt}
+      - {name: train-model-featurestore, path: /tmp/inputs/input-0/data}
+      - {name: train-model-model, path: /tmp/inputs/input-1/data}
     metadata:
       labels:
-        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.10
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
   - name: train-model
-    container:
-      args: [--x_train, /tmp/inputs/input-0/data, --y_train, /tmp/inputs/input-1/data]
-      image: nannakaroliina/kubeflow_pipeline_demo_train:latest
-    inputs:
-      artifacts:
-      - {name: preprocess-data-x_train, path: /tmp/inputs/input-0/data}
-      - {name: preprocess-data-y_train, path: /tmp/inputs/input-1/data}
+    container: {image: 'nannakaroliina/feasttrain:latest'}
     outputs:
       artifacts:
-      - {name: train-model-model, path: /app/model.plk}
+      - {name: train-model-featurestore, path: /app/feast_dir.zip}
+      - {name: train-model-model, path: /app/model.joblib}
     metadata:
       labels:
-        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.10
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
   arguments:
