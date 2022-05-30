@@ -47,7 +47,6 @@ test_data = store.get_online_features(
     features=infer_features,    
     entity_rows=[{"patient_id": 568}, {"patient_id": 555}]
 ).to_dict()
-print(test_data)
 test_df = pd.DataFrame.from_dict(data=test_data).dropna()
 if len(test_df):
     reg = load(args.model)
