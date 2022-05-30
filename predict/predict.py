@@ -45,13 +45,11 @@ infer_features = [
     ]
 test_data = store.get_online_features(
     features=infer_features,    
-    entity_rows=[{"patient_id": 568}, {"patient_id": 567}]
+    entity_rows=[{"patient_id": 568}, {"patient_id": 555}]
 ).to_dict()
 print(test_data)
 test_df = pd.DataFrame.from_dict(data=test_data).dropna()
-print(test_df)
-if len(df):
+if len(test_df):
     reg = load(args.model)
-    predictions = reg.predict(
-        test_df[sorted(test_df.drop("patient_id", axis=1))])
+    predictions = reg.predict(test_df[sorted(test_df.drop("patient_id", axis=1))])
     print(predictions)
