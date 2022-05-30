@@ -47,8 +47,11 @@ test_data = store.get_online_features(
     features=infer_features,    
     entity_rows=[{"patient_id": 568}, {"patient_id": 567}]
 ).to_dict()
-test_df = pd.DataFrame.from_dict(data=test_data)
-reg = load(args.model)
-predictions = reg.predict(
-    test_df[sorted(test_df.drop("patient_id", axis=1))])
-print(predictions)
+print(test_data)
+test_df = pd.DataFrame.from_dict(data=test_data).dropna()
+print(test_df)
+if len(df):
+    reg = load(args.model)
+    predictions = reg.predict(
+        test_df[sorted(test_df.drop("patient_id", axis=1))])
+    print(predictions)
