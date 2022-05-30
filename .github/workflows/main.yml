@@ -13,7 +13,7 @@ jobs:
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
       - name: Build the Train image
-        run: docker build ./train_model --tag nannakaroliina/feasttrain
+        run: docker build ./train --tag nannakaroliina/feasttrain
       - name: Push the Train image
         run: docker push nannakaroliina/feasttrain
       - name: Build the Predict image
