@@ -1,8 +1,7 @@
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_breast_cancer
 import pandas as pd
 import numpy as np
-
-from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
 
 
 def _preprocess_data():
@@ -34,6 +33,5 @@ def optimize(x_train, x_test):
 
 
 if __name__ == '__main__':
-    print('Preprocessing data...COCOA3')
-
+    print('Preprocessing data...')
     _preprocess_data()

@@ -1,0 +1,34 @@
+name: Download and merge csv
+inputs:
+- {name: url, type: String}
+- {name: output_csv, type: String}
+implementation:
+  container:
+    image: python:3.7
+    command:
+    - sh
+    - -c
+    - |2
+
+      if ! [ -x "$(command -v pip)" ]; then
+          python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip
+      fi
+
+      PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'pandas==1.1.4' 'kfp==1.8.11' && "$0" "$@"
+    - sh
+    - -ec
+    - |
+      program_path=$(mktemp -d)
+      printf "%s" "$0" > "$program_path/ephemeral_component.py"
+      python3 -m kfp.v2.components.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+    - "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing\
+      \ import *\n\ndef download_and_merge_csv(url: str, output_csv: str):\n  with\
+      \ urllib.request.urlopen(url) as res:\n    tarfile.open(fileobj=res, mode=\"\
+      r|gz\").extractall('data')\n  df = pd.concat(\n      [pd.read_csv(csv_file,\
+      \ header=None) \n       for csv_file in glob.glob('data/*.csv')])\n  df.to_csv(output_csv,\
+      \ index=False, header=False)\n\n"
+    args:
+    - --executor_input
+    - {executorInput: null}
+    - --function_to_execute
+    - download_and_merge_csv
